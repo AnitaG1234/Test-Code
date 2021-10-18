@@ -1,0 +1,197 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define append_in_vector   push_back
+#define the_next_element    second         
+#define the_first_element     first        
+#define vi                   vector<int>
+#define sz(s)            (int)s.size()
+#define rep(i,a,b)       for(int i=a;i<b;i++)
+#define bs               binary_search
+#define PI               3.14159265358979323844
+#define input(a,n)       for(int i=0;i<n;i++)cin>>a[i];
+#define lb               lower_bound
+#define ub               upper_bound
+#define mapi             map<int,int>
+#define point            complex<int>
+#define fat              998244353
+#define hell             1000000007
+#define N                100005
+#define vs               vector<string>
+#define pss              pair<string,string>
+
+vs conv_str_list(string str)
+{
+    int n = str.size();
+    vs res;
+    rep(i,0,n)
+    {
+        switch(str[i])
+        {
+            case '*': res.append_in_vector("*");
+            break;
+            case '+': res.append_in_vector("+");
+            break;
+            case 'i': res.append_in_vector("id");
+            break;
+            case '$': res.append_in_vector("$");
+            break;
+            case '(': res.append_in_vector("(");
+            break;
+            case ')': res.append_in_vector(")");
+            break;
+            case 'E':
+            if(i < n-1 && str[i+1] =='\'')  res.append_in_vector("E'");
+            else  res.append_in_vector("E");
+            break;
+            case 'T':
+            if(i<n-1&&str[i+1]=='\'') res.append_in_vector("T'");
+            else res.append_in_vector("T");
+            break;
+            case 'F': res.append_in_vector("F");
+        }
+    }
+    return res;
+}
+class BottomUpParsing
+{
+    map <pair<int,string>,string> mp;
+    vector< pair<string,string>> Rule_Pairs = {{"S","E"},{"E","TE'"},{"E'","+TE'"},{"E'",""},{"T","FT'"},{"T'","*FT'"},{"T'",""},{"F","(E)"},{"F","id"}};
+    public:
+        void initialize_table()
+        {
+            pair<int,string> pr;
+            vector<vector<pair<string,string>>> mapped_pairs = 
+            {
+                {
+                    {"id","s5"}, {"(","s4"}, {"E","1"},{"T","2"},{"F","3"}
+                },
+                {
+                    {"$","accept"}
+                },
+                {
+                    {"+","s7"},{")","r3"},{"$","r3"},{"E'","6"}
+                },
+                {
+                    {"+","r6"},{"*","s9"},{")","r6"},{"$","r6"},{"T'","8"}
+                },
+                {
+                    {"id","s5"},{"(","s4"},{"E","10"},{"T","2"},{"F","3"}
+                },
+                {
+                    {"+","r8"},{"*","r8"},{")","r8"},{"$","r8"}
+                },
+                {
+                    {")","r1"},{"$","r1"}
+                },
+                {
+                    {"id","s5"},{"(","s4"},{"F","3"},{"T","11"}
+                },
+                {
+                    {"+","r4"},{")","r4"},{"$","r4"}
+                },
+                {
+                    {"id","s5"},{"(","s4"},{"F","12"}
+                },
+                {
+                    {")","s13"}
+                },
+                {
+                    {"+","s7"},{"E'","14"},{")","r3"},{"$","r3"}
+                },
+                {
+                    {"+","r6"},{"*","s9"},{")","r6"},{"$","r6"},{"T'","15"}
+                },
+                {
+                    {"+","r7"},{"*","r7"},{")","r7"},{"$","r7"}
+                },
+                {
+                    {")","r2"},{"$","r2"}
+                },
+                {
+                    {"+","r5"},{")","r5"},{"$","r5"}
+                }
+            };
+            rep(i,0,16)
+            {
+                for(pss p : mapped_pairs[i]) mp[make_pair(i,p.the_first_element)] = p.the_next_element;
+            }
+            int temp1 = 0;
+            vi v;
+            int cnt[16];
+            rep(i,0,16)
+            {
+                for(auto i:v)
+                {
+                    cnt[i]++;
+                }
+            } 
+        }
+        void parse(vector<string> v)
+        {
+            vector<int> stack_vector;
+            stack_vector.append_in_vector(0);
+            int pointer = 0;
+            string A = v[pointer];
+            while(true)
+            {
+                int current = stack_vector.back();
+                pair<int,string> pr = {current,A};
+                if(mp.count(pr))
+                {
+                    string act = mp[pr];
+                    if(act[0]=='a')
+                    {
+                        cout<<"Parsing has been successfully finished\n";
+                        return;
+                    }           
+                    else if(act[0]=='r')
+                    {
+                        int ind = act.find('r');
+                        string temp = act.substr(ind+1);
+                        int rule_num = stoi(temp);
+                        vector<string>rule_cons = conv_str_list(Rule_Pairs[rule_num].the_next_element);
+                        string rule_ant = Rule_Pairs[rule_num].the_first_element;
+                        int temp_count_pop = rule_cons.size();
+                        while(temp_count_pop--)
+                        {
+                            stack_vector.pop_back();
+                        }
+                        stack_vector.append_in_vector(stoi(mp[{stack_vector.back(),rule_ant}]));
+                        cout<<rule_ant<<"-->"<<Rule_Pairs[rule_num].the_next_element<<endl;
+                    }
+                    else if(act[0]=='s')
+                    {
+                        int ind = act.find('s');
+                        string temp = act.substr(ind+1);
+                        stack_vector.append_in_vector(stoi(temp));
+                        pointer++;
+                        A = v[pointer]; 
+                    }
+                }
+                else
+                {
+                    cout<<pr.the_first_element<<" "<<pr.the_next_element<<endl;
+                    while(stack_vector.size())
+                    {
+                        cout<<stack_vector.back()<<'\n';
+                        stack_vector.pop_back();
+                    }
+                    cout<<"There is an error in parsing";
+                    return;
+                }
+            }
+        }
+};
+
+int main()
+{   
+    string exp;
+    getline(cin,exp);
+    exp += "$";
+    BottomUpParsing expression_parser;
+    expression_parser.initialize_table();   
+    vector<string> result = conv_str_list(exp);
+    expression_parser.parse(result);
+    return 0;
+}
