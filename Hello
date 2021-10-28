@@ -1,7 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#define append_in_vector   push_back
 #define the_next_element    second         
 #define the_first_element     first        
 #define vi                   vector<int>
