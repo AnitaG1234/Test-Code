@@ -1,10 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#define the_next_element    second         
-#define the_first_element     first        
-#define vi                   vector<int>
-#define sz(s)            (int)s.size()
 #define rep(i,a,b)       for(int i=a;i<b;i++)
 #define bs               binary_search
 #define PI               3.14159265358979323844
