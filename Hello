@@ -21,11 +21,7 @@ vs conv_str_list(string str)
     vs res;
     rep(i,0,n)
     {
-        switch(str[i])
-        {
-            case '*': res.append_in_vector("*");
-            break;
-            case '+': res.append_in_vector("+");
+        switch(str+': res.append_in_vector("+");
             break;
             case 'i': res.append_in_vector("id");
             break;
